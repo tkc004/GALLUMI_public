@@ -2,7 +2,7 @@ from likelihood_class import Likelihood
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator, RegularGridInterpolator
-from scipy.integrate import simps
+from scipy.integrate import simpson
 from scipy.special import erf, sici
 from mcfit import Hankel
 import time
@@ -79,9 +79,9 @@ class Subaru_Clustering_standard(Likelihood):
         self.Subaru_window_z4_data = np.loadtxt(data.path["data"]+"/Subaru_clustering/Subaru_window_z=4.txt", unpack=True)
         self.Subaru_window_z5_data = np.loadtxt(data.path["data"]+"/Subaru_clustering/Subaru_window_z=5.txt", unpack=True)
         self.Subaru_window_z6_data = np.loadtxt(data.path["data"]+"/Subaru_clustering/Subaru_window_z=6.txt", unpack=True)
-        self.Subaru_window_z4_data[1] /= simps(self.Subaru_window_z4_data[1], self.Subaru_window_z4_data[0])
-        self.Subaru_window_z5_data[1] /= simps(self.Subaru_window_z5_data[1], self.Subaru_window_z5_data[0])
-        self.Subaru_window_z6_data[1] /= simps(self.Subaru_window_z6_data[1], self.Subaru_window_z6_data[0])
+        self.Subaru_window_z4_data[1] /= simpson(self.Subaru_window_z4_data[1], x=self.Subaru_window_z4_data[0])
+        self.Subaru_window_z5_data[1] /= simpson(self.Subaru_window_z5_data[1], x=self.Subaru_window_z5_data[0])
+        self.Subaru_window_z6_data[1] /= simpson(self.Subaru_window_z6_data[1], x=self.Subaru_window_z6_data[0])
         self.redshift_windows = {"4": self.Subaru_window_z4_data,
                                  "5": self.Subaru_window_z5_data,
                                  "6": self.Subaru_window_z6_data
@@ -189,10 +189,10 @@ class Subaru_Clustering_standard(Likelihood):
         return P_central * np.exp(-Mmin_central/Mhalos)
 
     def N_satellite(self, SHMFs, P_satellite, Msubhalos, Mmin_satellite):
-        return simps(SHMFs * P_satellite * np.exp(-Mmin_satellite/Msubhalos), Msubhalos, axis=1)
+        return simpson(SHMFs * P_satellite * np.exp(-Mmin_satellite/Msubhalos), x=Msubhalos, axis=1)
 
     def ngal_of_z(self, HMFs, Mhalos, Ngal):
-        return simps(HMFs * Ngal, Mhalos)
+        return simpson(HMFs * Ngal, x=Mhalos)
 
     def mUV_to_MUV(self, data, z, mUV_min, mUV_max):
         Omega_m = data.mcmc_parameters['Omega_m']['current']
@@ -227,11 +227,11 @@ class Subaru_Clustering_standard(Likelihood):
         return -2.5 * np.log10(epsilonstar * Mhdot / ((Mh/Mc)**alphastar + (Mh/Mc)**betastar) / self.kappaUV) + 51.63
 
     def P_1_halo(self, HMFs, Mhalos, N_central, N_satellite, uNFW, ngals_of_z):
-        return simps((2. * N_central * N_satellite * uNFW + N_satellite**2 * uNFW**2) * HMFs, Mhalos, axis=1) / ngals_of_z**2
+        return simpson((2. * N_central * N_satellite * uNFW + N_satellite**2 * uNFW**2) * HMFs, x=Mhalos, axis=1) / ngals_of_z**2
 
     def P_2_halo(self, cosmo, k_array, z, HMFs, biases, Mhalos, N_central, N_satellite, uNFW, ngals_of_z):
         pk_lin = np.vectorize(lambda x: cosmo.pk_cb_lin(x, z))(k_array)
-        return pk_lin * simps(HMFs * (N_central + N_satellite * uNFW) * biases, Mhalos)**2. / ngals_of_z**2
+        return pk_lin * simpson(HMFs * (N_central + N_satellite * uNFW) * biases, x=Mhalos)**2. / ngals_of_z**2
 
     def scatter_probability(self, MUV, width, MUV_av, sigma_MUV):
         return 0.5 * (erf((MUV_av-MUV+width/2.) / (sigma_MUV*np.sqrt(2))) - erf((MUV_av-MUV-width/2.) / (sigma_MUV*np.sqrt(2))))
@@ -239,7 +239,7 @@ class Subaru_Clustering_standard(Likelihood):
     def omega_theta(self, theta, yy, G, z_sub_array, rcomovings, drcomovingsdz, redshifts_window, window):
         PP  = np.array([PchipInterpolator(np.log(yy / theta), G[numzsub], extrapolate=False)(np.log(rcomovings[numzsub])) / 2. / np.pi for numzsub in range(len(z_sub_array))])
         integrand = PchipInterpolator(z_sub_array, PP/drcomovingsdz, extrapolate=False)(redshifts_window) * window**2
-        return simps(integrand, redshifts_window)
+        return simpson(integrand, x=redshifts_window)
 
     def loglkl(self, cosmo, data):
 

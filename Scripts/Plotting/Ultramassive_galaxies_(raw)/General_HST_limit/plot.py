@@ -148,7 +148,7 @@ def plot_hist2d(datax, datay, ax, num_bins=30, weights=[None], color=None, zorde
         bin_centresx, interpolation_smoothing, mode="reflect"
     )
     interp_hist = scipy.ndimage.zoom(hist, interpolation_smoothing, mode="reflect")
-    interp_smoothed_hist = scipy.ndimage.filters.gaussian_filter(
+    interp_smoothed_hist = scipy.ndimage.gaussian_filter(
         interp_hist, [sigma, sigma], mode="reflect"
     )
 

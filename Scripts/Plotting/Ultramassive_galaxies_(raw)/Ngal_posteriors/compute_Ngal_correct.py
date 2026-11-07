@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.interpolate import PchipInterpolator
-from scipy.integrate import simps
+from scipy.integrate import simpson
 from scipy.special import erf
 from classy import Class
 import glob
@@ -91,7 +91,7 @@ def Ngals(args):
 
         # HMFs and average MUVs only need to be computed at each redshift slice
 
-        # Ngal += simps(HMF_interp(Mh_array_integrate), Mh_array_integrate) * Vol
+        # Ngal += simpson(HMF_interp(Mh_array_integrate), x=Mh_array_integrate) * Vol
 
         if z == 7.48:
             zz = np.linspace(7., 8.5, 10)
@@ -102,10 +102,10 @@ def Ngals(args):
             HMFs = np.array([HMF(cosmo, znew, mass, ks, amp, mean, sigma) for mass in Mhalos])
             HMF_interp = PchipInterpolator(Mhalos, HMFs)
             Mh_array_integrate = np.geomspace(M_lower, 1e14, 500)
-            dngaldz = simps(HMF_interp(Mh_array_integrate), Mh_array_integrate)
+            dngaldz = simpson(HMF_interp(Mh_array_integrate), x=Mh_array_integrate)
             dVol = (rcomoving(znew, cosmo.Omega_m(), cosmo.h()))**2 * c / np.sqrt(cosmo.Omega_m() * np.power(1 + znew,3) + 1. - cosmo.Omega_m()) / (100. * cosmo.h())  * (38. / 60**2 * (np.pi / 180.)**2)
             dNgaldz.append(dngaldz * dVol)
-        Ngal += simps(dNgaldz, zz)
+        Ngal += simpson(dNgaldz, x=zz)
 
     return weight, Ngal
 
@@ -127,7 +127,7 @@ def Ngals2(args):
 
         M_lower = 10**(log10Mstar) / 0.157 / epsilon # epsilon = 0.1
         Mh_array_integrate = np.geomspace(M_lower, 1e14, 500)
-        Ngal += simps(HMF_interp(Mh_array_integrate), Mh_array_integrate) * Vol
+        Ngal += simpson(HMF_interp(Mh_array_integrate), x=Mh_array_integrate) * Vol
     return weight, Ngal
 
 
@@ -171,7 +171,7 @@ if __name__ == '__main__':
 
 # import numpy as np
 # from scipy.interpolate import PchipInterpolator
-# from scipy.integrate import simps
+# from scipy.integrate import simpson
 # from scipy.special import erf
 # from classy import Class
 # import glob
@@ -263,7 +263,7 @@ if __name__ == '__main__':
 
 #         M_lower = 10**(log10Mstar) / 0.156 / epsilon # epsilon = 0.1
 #         Mh_array_integrate = np.geomspace(M_lower, 1e14, 500)
-#         Ngal += simps(HMF_interp(Mh_array_integrate), Mh_array_integrate) * 1e5
+#         Ngal += simpson(HMF_interp(Mh_array_integrate), x=Mh_array_integrate) * 1e5
 #     print("[", lkl, amp, mean, "]", Ngal)
 #     return weight, Ngal
 
@@ -312,7 +312,7 @@ if __name__ == '__main__':
 
 # #         M_lower = 10**(log10Mstar) / 0.156 / epsilon # epsilon = 0.1
 # #         Mh_array_integrate = np.geomspace(M_lower, 1e14, 500)
-# #         Ngal += simps(HMF_interp(Mh_array_integrate), Mh_array_integrate) * 1e5
+# #         Ngal += simpson(HMF_interp(Mh_array_integrate), x=Mh_array_integrate) * 1e5
 # #     return Ngal
 
 # # #######################

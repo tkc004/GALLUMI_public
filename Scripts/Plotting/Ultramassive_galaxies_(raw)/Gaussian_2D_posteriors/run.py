@@ -8,7 +8,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import patches as mpatches
 from scipy.interpolate import PchipInterpolator
 import scipy.ndimage
-from scipy.integrate import simps
+from scipy.integrate import simpson
 from scipy.ndimage import gaussian_filter
 # purple - green - darkgoldenrod - blue - red
 plt.style.use("scientific")
@@ -108,7 +108,7 @@ def plot_hist2d(datax, datay, ax, num_bins=30, weights=[None], color=None, zorde
     interp_y_centers = scipy.ndimage.zoom(bin_centresy, interpolation_smoothing, mode='reflect')
     interp_x_centers = scipy.ndimage.zoom(bin_centresx,interpolation_smoothing, mode='reflect')
     interp_hist = scipy.ndimage.zoom(hist, interpolation_smoothing, mode='reflect')
-    interp_smoothed_hist = scipy.ndimage.filters.gaussian_filter(interp_hist, [sigma,sigma], mode='nearest')
+    interp_smoothed_hist = scipy.ndimage.gaussian_filter(interp_hist, [sigma,sigma], mode='nearest')
 
     # density_cmap = LinearSegmentedColormap.from_list("density_cmap", [(0, color), (0.4, color),(1,(1, 1, 1, 0))]).reversed()
     # ax.imshow(np.transpose(interp_smoothed_hist)[::-1], extent=[bin_edgesx.min(), bin_edgesx.max(), bin_edgesy.min(), bin_edgesy.max()], interpolation="nearest", cmap=density_cmap, aspect="auto", zorder=zorder, alpha=0.4)
@@ -179,4 +179,3 @@ plt.xlim(-0.6, 1)
 plt.ylim(0, 35)
 # plt.semilogy()
 plt.savefig("Gaussian_posteriors_2D.pdf")
-

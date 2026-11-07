@@ -3,7 +3,7 @@ from likelihood_class import Likelihood
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator, RegularGridInterpolator
-from scipy.integrate import simps
+from scipy.integrate import simpson
 from scipy.special import erf, sici
 from mcfit import Hankel
 import time
@@ -294,12 +294,12 @@ class MTNG_Clustering(Likelihood):
         return P_central * np.exp(-Mmin_central / Mhalos)
 
     def N_satellite(self, SHMFs, P_satellite, Msubhalos, Mmin_satellite):
-        return simps(
-            SHMFs * P_satellite * np.exp(-Mmin_satellite / Msubhalos), Msubhalos, axis=1
+        return simpson(
+            SHMFs * P_satellite * np.exp(-Mmin_satellite / Msubhalos), x=Msubhalos, axis=1
         )
 
     def ngal_of_z(self, HMFs, Mhalos, Ngal):
-        return simps(HMFs * Ngal, Mhalos)
+        return simpson(HMFs * Ngal, x=Mhalos)
 
     def astro_parameters(self, data, z):
         alphastar_central = data.mcmc_parameters["alphastar_central"]["current"]
@@ -383,10 +383,10 @@ class MTNG_Clustering(Likelihood):
 
     def P_1_halo(self, HMFs, Mhalos, N_central, N_satellite, uNFW, ngals_of_z):
         return (
-            simps(
+            simpson(
                 (2.0 * N_central * N_satellite * uNFW + N_satellite**2 * uNFW**2)
                 * HMFs,
-                Mhalos,
+                x=Mhalos,
                 axis=1,
             )
             / ngals_of_z**2
@@ -408,7 +408,7 @@ class MTNG_Clustering(Likelihood):
         pk_lin = np.vectorize(lambda x: cosmo.pk_lin(x, z))(k_array)
         return (
             pk_lin
-            * simps(HMFs * (N_central + N_satellite * uNFW) * biases, Mhalos) ** 2.0
+            * simpson(HMFs * (N_central + N_satellite * uNFW) * biases, x=Mhalos) ** 2.0
             / ngals_of_z**2
         )
 

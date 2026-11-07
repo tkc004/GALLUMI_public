@@ -8,7 +8,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import patches as mpatches
 from scipy.interpolate import PchipInterpolator
 import scipy.ndimage
-from scipy.integrate import simps
+from scipy.integrate import simpson
 plt.style.use("scientific")
 matplotlib.rc('text', usetex=True)
 matplotlib.rc('text.latex', preamble=r'\usepackage{amsmath}')
@@ -121,7 +121,7 @@ def plot_hist2d(datax, datay, ax, num_bins=30, weights=[None], color=None, zorde
     interp_y_centers = scipy.ndimage.zoom(bin_centresy, interpolation_smoothing, mode='reflect')
     interp_x_centers = scipy.ndimage.zoom(bin_centresx,interpolation_smoothing, mode='reflect')
     interp_hist = scipy.ndimage.zoom(hist, interpolation_smoothing, mode='reflect')
-    interp_smoothed_hist = scipy.ndimage.filters.gaussian_filter(interp_hist, [sigma,sigma], mode='reflect')
+    interp_smoothed_hist = scipy.ndimage.gaussian_filter(interp_hist, [sigma,sigma], mode='reflect')
 
     # density_cmap = LinearSegmentedColormap.from_list("density_cmap", [(0, color), (0.4, color),(1,(1, 1, 1, 0))]).reversed()
     # ax.imshow(np.transpose(interp_smoothed_hist)[::-1], extent=[bin_edgesx.min(), bin_edgesx.max(), bin_edgesy.min(), bin_edgesy.max()], interpolation="nearest", cmap=density_cmap, aspect="auto", zorder=zorder, alpha=0.4)
@@ -148,7 +148,7 @@ hist, bin_edges, bin_centres = get_hist(np.log(data_for_lims), num_bins=bins, we
 bin_centres = np.exp(bin_centres)
 x_array = np.linspace(min(bin_centres), max(bin_centres), 1000)
 interpolator = PchipInterpolator(bin_centres, hist)(x_array)
-area = simps(interpolator, np.log(x_array))
+area = simpson(interpolator, x=np.log(x_array))
 plt.plot(x_array, interpolator/area, color="black", lw=2)
 # plt.plot(x_array, 10**(gaussian_filter1d(np.log10(interpolator/area), 2, mode="nearest")), color=colors[0], alpha=1, ls=(0.,(1,1)), lw=2, label=labels[num])
 # plot_hist(data_for_lims, ax, bins, weights, colors[num], ls="dashed")

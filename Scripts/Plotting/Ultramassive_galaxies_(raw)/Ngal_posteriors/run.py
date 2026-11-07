@@ -8,7 +8,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from matplotlib import patches as mpatches
 from scipy.interpolate import PchipInterpolator
 import scipy.ndimage
-from scipy.integrate import simps
+from scipy.integrate import simpson
 from scipy.ndimage import gaussian_filter1d
 
 # purple - green - darkgoldenrod - blue - red
@@ -140,7 +140,7 @@ def plot_hist2d(datax, datay, ax, num_bins=30, weights=[None], color=None, zorde
         bin_centresx, interpolation_smoothing, mode="reflect"
     )
     interp_hist = scipy.ndimage.zoom(hist, interpolation_smoothing, mode="reflect")
-    interp_smoothed_hist = scipy.ndimage.filters.gaussian_filter(
+    interp_smoothed_hist = scipy.ndimage.gaussian_filter(
         interp_hist, [sigma, sigma], mode="reflect"
     )
 
@@ -199,7 +199,7 @@ for num, name in enumerate(names):
     bin_centres = np.exp(bin_centres[1:])
     x_array = np.linspace(min(bin_centres), max(bin_centres), 100)
     interpolator = PchipInterpolator(bin_centres, hist)(x_array)
-    area = simps(interpolator, np.log(x_array))
+    area = simpson(interpolator, x=np.log(x_array))
     plt.plot(x_array, interpolator / area, color=colors[num], lw=2, ls=(0, (3, 1.5)))
     # plot_hist(data_for_lims, ax, bins, weights, colors[num], labels[num], "dashed")
 
@@ -226,7 +226,7 @@ for num, name in enumerate(names):
     bin_edges = np.exp(bin_edges[:-1])
     x_array = np.linspace(min(bin_edges), max(bin_edges), 1000)
     interpolator = PchipInterpolator(bin_edges, hist)(x_array)
-    area = simps(interpolator, np.log(x_array))
+    area = simpson(interpolator, x=np.log(x_array))
     plt.plot(
         x_array,
         10 ** (gaussian_filter1d(np.log10(interpolator / area), 2, mode="nearest")),

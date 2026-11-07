@@ -7,7 +7,7 @@ from likelihood_class import Likelihood
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator
-from scipy.integrate import simps
+from scipy.integrate import simpson
 from scipy.special import erf
 
 
@@ -232,7 +232,7 @@ class UVLF_HST_ST_model2(Likelihood):
                     / width
                 )
                 chisq += (
-                    (simps(second_integrand, self.Mhalos) - UVLF_data) / UVLF_error
+                    (simpson(second_integrand, x=self.Mhalos) - UVLF_data) / UVLF_error
                 ) ** 2
 
         # Add Gaussian prior from BBN

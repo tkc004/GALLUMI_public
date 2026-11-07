@@ -12,14 +12,15 @@ This GitHub page contains 1) the GALLUMI likelihood code, 2) scripts to generate
 
 ## Basic Usage of GALLUMI
 
-- Download the [MontePython] MCMC sampler. 
+- Create a Python 3.10 environment with NumPy, SciPy, Matplotlib, Cython, and MPI support, then install the modern CLASS Python wrapper with `python -m pip install classy`. On macOS, if Homebrew LLVM is selected by default, use `CC=/usr/bin/clang CXX=/usr/bin/clang++ python -m pip install classy`.
+- Download the [MontePython] MCMC sampler.
 - Move the contents of MontePython_files to the MontePython folder. 
     - MontePython_files/Bestfits, MontePython_files/Covmats and MontePython_files/Param_files go in the main MontePython folder
     - Create a new folder called "UVLF" in MontePython/data/ and move the contents of MontePython_files/Data/ in there
     - Move the contents of MontePython_files/Likelihoods/ to MontePython/montepython/likelihoods/
 - Run the likelihood code with e.g. 
     ```sh 
-    python2 montepython/MontePython.py run --conf default.conf --param Param_files/UVLF_HST_ST_model1.param --bestfit Bestfits/UVLF_HST_ST_model1.bestfit --covmat Covmats/UVLF_HST_ST_model1.covmat -f 0.5 --output UVLF_HST_ST_model1
+    python3 montepython/MontePython.py run --conf default.conf --param Param_files/UVLF_HST_ST_model1.param --bestfit Bestfits/UVLF_HST_ST_model1.bestfit --covmat Covmats/UVLF_HST_ST_model1.covmat -f 0.5 --output UVLF_HST_ST_model1
     ```
 - In some cases, classy.pyx in CLASS should be modified. For example, when varying the power-spectrum amplitude, it'll be necessary to include the following lines in the function "get_current_derived_parameters":
   ```

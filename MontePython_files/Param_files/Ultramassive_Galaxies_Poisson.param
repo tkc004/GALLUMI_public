@@ -31,6 +31,7 @@ data.cosmo_arguments['z_max_pk'] = 10.
 data.cosmo_arguments['m_ncdm'] = 0.06
 data.cosmo_arguments['N_ur'] = 2.0308
 data.cosmo_arguments['N_ncdm'] = 1
+data.cosmo_arguments['deg_ncdm'] = 1.
 data.cosmo_arguments['T_ncdm'] = 0.71611
 
 data.N=1000000

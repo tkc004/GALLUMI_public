@@ -2,7 +2,7 @@ from likelihood_class import Likelihood
 
 import numpy as np
 from scipy.interpolate import PchipInterpolator
-from scipy.integrate import simps
+from scipy.integrate import simpson
 import matplotlib
 
 matplotlib.use("TkAgg")
@@ -161,7 +161,7 @@ class Galaxies_Poisson_Mstar(Likelihood):
 
             M_lower = 10 ** (log10Mstar) / 0.157 / 0.1  # epsilon = 0.1
             Mh_array_integrate = np.geomspace(M_lower, 1e14, 500)
-            N_gal = simps(HMF_interp(Mh_array_integrate), Mh_array_integrate) * Vol
+            N_gal = simpson(HMF_interp(Mh_array_integrate), x=Mh_array_integrate) * Vol
             log_lkl_poisson += -N_gal + 1.0 * np.log(N_gal) - np.log(1.0)
 
         return log_lkl_poisson

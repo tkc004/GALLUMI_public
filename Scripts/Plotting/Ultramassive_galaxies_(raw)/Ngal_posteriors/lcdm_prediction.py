@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.interpolate import PchipInterpolator
-from scipy.integrate import simps
+from scipy.integrate import simpson
 from scipy.special import erf
 from classy import Class
 import glob
@@ -78,7 +78,7 @@ def Ngals(Mcut):
 
     M_lower = Mcut
     Mh_array_integrate = np.geomspace(M_lower, 1e14, 500)
-    Ngal = simps(HMF_interp(Mh_array_integrate), Mh_array_integrate) * 1e5
+    Ngal = simpson(HMF_interp(Mh_array_integrate), x=Mh_array_integrate) * 1e5
 
     print(Ngal)
 
